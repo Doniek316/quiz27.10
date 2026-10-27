@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     private int aktualne = 0;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,31 +37,64 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-    dodajPytania();
-    textView = findViewById(R.id.textViewPytania);
-    buttonTak = findViewById(R.id.button3);
-    buttonNie = findViewById(R.id.button4);
-    buttonDalej = findViewById(R.id.button5);
-    imageView = findViewById(R.id.imageView);
-    wypiszPytanie(0);
+        dodajPytania();
+        textView = findViewById(R.id.textViewPytania);
+        buttonTak = findViewById(R.id.button3);
+        buttonNie = findViewById(R.id.button4);
+        buttonDalej = findViewById(R.id.button5);
+        imageView = findViewById(R.id.imageView);
+        wypiszPytanie(0);
 
-    buttonDalej.setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    aktualne++;
-                    if(aktualne == pytania.size()){
-                        buttonDalej.setVisibility(INVISIBLE);
-                        //todo: wypisywanie wyniuku
-                    }else{
+        buttonNie.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        sprawdzanieOdp(false);
+                    }
+                }
+        );
+
+        buttonTak.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        sprawdzanieOdp(true);
+                    }
+                }
+        );
+
+        buttonDalej.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        aktualne++;
+                        if (aktualne == pytania.size()) {
+                            buttonDalej.setVisibility(INVISIBLE);
+                            //todo: wypisywanie wyniuku
+                        } else {
+                            wypiszPytanie(aktualne);
+                        }
                         wypiszPytanie(aktualne);
                     }
-                    wypiszPytanie(aktualne);
                 }
-            }
-    );
+        );
 
-}
+    }
+
+
+
+    private void sprawdzanieOdp(boolean odp) {
+        if (pytania.get(aktualne).isPoprawnaOdpowiedz() == odp) {
+            pytania.get(aktualne).setCzyPoprawnie(true);
+            Toast.makeText(this, "poprawna odpowiedz",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            pytania.get(aktualne).setCzyPoprawnie(false);
+            Toast.makeText(this, "bledna odpowiedz",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void wypiszPytanie(int ktore){
         Pytanie pytanie = pytania.get(ktore);
